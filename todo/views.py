@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
-
+from rest_framework import filters
 from . import serializers
 from . import models
 from . import permissions
@@ -101,5 +101,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class=serializers.UserProfileSerializer
     queryset=models.UserProfile.object.all()
 
-    authentication_classes=(TokenAuthentication,)
-    permission_classes=(permissions.UpdateOwnProfile,)
+    authentication_classes=(TokenAuthentication,) # generate temporary tokens
+    permission_classes=(permissions.UpdateOwnProfile,) # controll updating permission
+    filter_backends=(filters.SearchFilter,) #Search feature
+    search_fields=('name','email',) #search filters
