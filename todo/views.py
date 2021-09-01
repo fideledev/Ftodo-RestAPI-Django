@@ -1,9 +1,11 @@
+from django.http import response
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
 from . import serializers
+from . import models
 # Create your views here.
 
 class HelloAPIView(APIView):
@@ -47,6 +49,8 @@ class HelloAPIView(APIView):
 
 class HelloViewSet(viewsets.ViewSet):
 
+    serializer=serializers.HelloSerializer
+
     def list(self,request):
         an_apiview=[
             'Salam',
@@ -56,3 +60,40 @@ class HelloViewSet(viewsets.ViewSet):
         ]
 
         return Response({'message':'hello','apiview':an_apiview})
+
+    def create(self,request):
+        serializer=serializers.HelloSerializer(data=request.data)
+
+        if serializer.is_valid():
+            name=serializer.data.get('name')
+
+            message=f'Hello {name}'
+            return Response({'message':message})
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+    
+    def retrieve(self,request,pk=None):
+        """Handles for getting objects by it's Id """
+
+        return Response({'http_method':'GET'})
+
+    def update(self,request,pk=None):
+        """Handles for updating objects by it's Id """
+
+        return Response({'http_method':'PUT'})
+
+    def partial_update(self,request,pk=None):
+        """Handles for updating only the specific changed part by it's Id """
+
+        return Response({'http_method':'PATCH'})
+
+    def destroy(self,request,pk=None):
+        """Delete specific object by it's id """
+        return Response({'http_method':'DELETE'})
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handles creating,deleting and updating of profiles"""
+    serializer_class=serializers.UserProfileSerializer
+    queryset=models.UserProfile.object.all()
