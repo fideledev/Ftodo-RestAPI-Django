@@ -6,6 +6,9 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.permissions import IsAuthenticated
 from . import serializers
 from . import models
 from . import permissions
@@ -105,3 +108,26 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes=(permissions.UpdateOwnProfile,) # controll updating permission
     filter_backends=(filters.SearchFilter,) #Search feature
     search_fields=('name','email',) #search filters
+
+
+class LoginViewSet(viewsets.ViewSet):
+    """check email and password and return auth token"""
+    serializer_class=AuthTokenSerializer
+
+    def create(self,request):
+        """user ObtainauthToken to check and obtain token"""
+        return ObtainAuthToken().as_view()(request=request._request)
+
+
+class TaskViewset(viewsets.ModelViewSet):
+    serializer_class=serializers.TaskSerializer
+    queryset=models.Task.objects.all()
+    authentication_classes=(TokenAuthentication,)
+    filter_backends=(filters.SearchFilter,)
+    permission_classes=(permissions.TaskForUser,)
+    search_fields=('title','descriptions',)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    

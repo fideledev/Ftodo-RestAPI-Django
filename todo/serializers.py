@@ -1,4 +1,6 @@
+from django.db.models import fields
 from rest_framework import serializers
+from rest_framework import permissions
 from . import models
 class HelloSerializer(serializers.Serializer):
     """Serializers for testing"""
@@ -25,3 +27,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.Task
+        fields=('title','descriptions','status','user')
+        extra_kwargs={'user':{
+            'read_only':True,
+        }}
+
+    

@@ -53,3 +53,13 @@ class UserProfile(AbstractBaseUser,PermissionsMixin):
         return self.email
 
     
+
+class Task(models.Model):
+    title=models.CharField(max_length=100)
+    descriptions=models.TextField()
+    status=models.BooleanField(default=False)
+    user=models.ForeignKey(UserProfile,related_name='tasks',on_delete=models.CASCADE)
+    created_on=models.DateTimeField(auto_now_add=True,null=True)
+
+    def __str__(self):
+        return self.title

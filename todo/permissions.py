@@ -8,3 +8,10 @@ class UpdateOwnProfile(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         return obj.id == request.user.id
+
+
+class TaskForUser(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method == permissions.SAFE_METHODS:
+            return True
+        return obj.user == request.user
