@@ -126,6 +126,9 @@ class TaskViewset(viewsets.ModelViewSet):
     filter_backends=(filters.SearchFilter,)
     permission_classes=(permissions.TaskForUser,)
     search_fields=('title','descriptions',)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
